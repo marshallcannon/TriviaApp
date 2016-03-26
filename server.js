@@ -4,8 +4,9 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 app.use(express.static('game'));
 
-var players = [];
+var players = {};
 var host;
+var locked = false;
 
 app.get('/', function(req, res){
   res.sendFile(__dirname + 'game/index.html');
@@ -17,12 +18,28 @@ io.on('connection', function(socket){
   if(io.engine.clientsCount === 1)
   {
     host = socket.id;
-    socket.host.emit('makeHost');
+    io.to(host).emit('makeHost');
   }
 
   socket.on('disconnect', function(){
     console.log('Player disconnected...');
     delete players[socket.id];
+  });
+
+  //Set Player Name
+  socket.on('setName', function(msg){
+    players[socket.id].name = msg;
+    io.to(host).emit('updatePlayers', players);
+  });
+
+  //Lock Buzzers
+  socket.on('lock', function(){
+    locked = true;
+  });
+
+  //Unlock Buzzers
+  socket.on('unlock', function(){
+    locked = false;
   });
 
 });
