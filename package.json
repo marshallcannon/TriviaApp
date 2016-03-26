@@ -1,0 +1,9 @@
+{
+  "name": "Trivia App",
+  "version": "0.0.1",
+  "description": "Simple trivia app for trivia night.",
+  "dependencies": {
+    "express": "^4.13.4",
+    "socket.io": "^1.4.5"
+  }
+}
