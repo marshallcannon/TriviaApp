@@ -7,6 +7,7 @@ app.use(express.static('game'));
 var players = {};
 var host;
 var locked = false;
+var winnerSelected = false;
 
 app.get('/', function(req, res){
   res.sendFile(__dirname + 'game/index.html');
@@ -40,6 +41,19 @@ io.on('connection', function(socket){
   //Unlock Buzzers
   socket.on('unlock', function(){
     locked = false;
+    winnerSelected = false;
+  });
+
+  //Player Buzzed In
+  socket.on('buzz', function(){
+    if(!locked && !winnerSelected)
+    {
+      winnerSelected = true;
+      io.to(host).emit('buzzWinner', {socketID: socket.id});
+    }
+    else {
+      io.to(host).emit('buzzTardy', {socketID: socket.id});
+    }
   });
 
 });

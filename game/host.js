@@ -36,6 +36,7 @@ unlock = function() {
 
   lockImage.visible = false;
   socket.emit('unlock');
+  resetNameColors();
 
 };
 
@@ -49,6 +50,15 @@ checkOverlap = function(a, b) {
   }
   else {
     return false;
+  }
+
+};
+
+resetNameColors = function() {
+
+  for(var i = 0; i < playerNames.length; i++)
+  {
+      playerNames[i].tint = 0xFFFFFF;
   }
 
 };
@@ -102,6 +112,33 @@ socket.on('updatePlayers', function(msg){
           }
         }
       }
+    }
+  }
+
+  //Bring Sam's Face to Front
+  game.world.bringToTop(lockImage);
+
+});
+
+socket.on('buzzWinner', function(msg){
+
+  for(var i = 0; i < playerNames.length; i++)
+  {
+    if(msg.socketID == playerNames[i].id)
+    {
+      playerNames[i].tint = 0x00FF00;
+    }
+  }
+
+});
+
+socket.on('buzzTardy', function(msg){
+
+  for(var i = 0; i < playerNames.length; i++)
+  {
+    if(msg.socketID == playerNames[i].id)
+    {
+      playerNames[i].tint = 0xFF0000;
     }
   }
 
